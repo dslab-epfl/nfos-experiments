@@ -7,6 +7,10 @@
 # All these files saved in the respective NF directory
 #
 
+# LOCK
+exec {lock_fd}>/var/nfos-lock
+flock -x "$lock_fd"
+
 SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
 NF=$1
@@ -131,3 +135,6 @@ fi
 if [[ $BENCH_PROFILE == "yes" ]]; then
     grep Profile $NFOS_PATH/nf/$NF/middlebox.log > $NF.profile
 fi
+
+# UNLOCK
+exec {lock_fd}>&-

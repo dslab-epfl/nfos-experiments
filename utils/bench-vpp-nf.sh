@@ -1,5 +1,9 @@
 #!/bin/bash
 # Run vpp NF
+# LOCK
+exec {lock_fd}>/var/nfos-lock
+flock -x "$lock_fd"
+
 SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
 
@@ -182,3 +186,5 @@ if [[ $BENCH_TYPE == "latency" ]]; then
     scp "$TESTER_HOST:~/latency-profile" . >/dev/null 2>&1
 fi
 
+# UNLOCK
+exec {lock_fd}>&-
