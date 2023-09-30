@@ -1,0 +1,14 @@
+nat44 enable sessions 1048576 users 1048576
+set interface nat44 in lan out wan
+nat44 add address 10.2.0.2 - 10.2.0.58
+set interface promiscuous on wan
+set interface promiscuous on lan
+set interface state lan up
+set interface state wan up
+set interface ip address wan 173.0.3.1/24
+set interface ip address lan 10.0.2.1/24
+ip route add 0.0.0.0/0 via 174.0.3.2 wan
+set ip neighbor wan 174.0.3.2 12:34:56:78:90:ab static no-fib-entry
+set nat timeout udp 24
+set nat timeout tcp-established 24
+set nat timeout tcp-transitory 24

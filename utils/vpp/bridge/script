@@ -1,0 +1,7 @@
+set interface promiscuous on lan
+set interface promiscuous on wan
+set interface state lan up
+set interface state wan up
+set int l2 bridge lan 1
+set int l2 bridge wan 1
+set bridge-domain mac-age 1 2

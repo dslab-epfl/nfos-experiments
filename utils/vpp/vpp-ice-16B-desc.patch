@@ -1,0 +1,12 @@
+diff --git a/build/external/packages/dpdk.mk b/build/external/packages/dpdk.mk
+index c35ac84c2..44d40933d 100644
+--- a/build/external/packages/dpdk.mk
++++ b/build/external/packages/dpdk.mk
+@@ -158,6 +158,7 @@ DPDK_MESON_ARGS = \
+ 	-Db_pie=true \
+ 	-Dmachine=$(DPDK_MACHINE) \
+ 	--buildtype=$(DPDK_BUILD_TYPE) \
++	-Dc_args=-DRTE_LIBRTE_ICE_16BYTE_RX_DESC \
+ 	${DPDK_MLX_CONFIG_FLAG}
+ 
+ PIP_DOWNLOAD_DIR = $(CURDIR)/downloads/

@@ -1,0 +1,27 @@
+set interface promiscuous on wan_one
+set interface promiscuous on wan_two
+set interface promiscuous on lan_one
+set interface promiscuous on lan_two
+set interface state wan_one up
+set interface state wan_two up
+set interface state lan_one up
+set interface state lan_two up
+set interface ip address wan_one 175.0.4.1/24
+set interface ip address wan_two 175.0.3.1/24
+set interface ip address lan_one 10.0.2.1/32
+set interface ip address lan_two 10.0.2.2/32
+ip route add 118.0.0.1/32 via 174.0.3.2 wan_one
+ip route add 118.0.0.2/32 via 174.0.2.2 wan_two
+ip route add 10.0.3.1/32 via 10.0.3.0 lan_one
+ip route add 10.0.4.1/32 via 10.0.4.0 lan_two
+set ip neighbor wan_one 174.0.3.2 12:34:56:78:90:ab static no-fib-entry
+set ip neighbor wan_two 174.0.2.2 11:34:56:78:90:ab static no-fib-entry
+set ip neighbor lan_one 10.0.3.0 13:34:56:78:90:ab static no-fib-entry
+set ip neighbor lan_two 10.0.4.0 14:34:56:78:90:ab static no-fib-entry
+lb conf ip4-src-address 118.0.0.0
+lb conf buckets 1048576
+lb conf timeout 36
+lb vip 118.0.0.1/32 encap l3dsr dscp 2 new_len 32
+lb as 118.0.0.1/32 10.0.3.1 10.0.4.1
+lb vip 118.0.0.2/32 encap l3dsr dscp 2 new_len 32
+lb as 118.0.0.2/32 10.0.3.1 10.0.4.1

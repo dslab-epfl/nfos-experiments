@@ -1,0 +1,15 @@
+set interface promiscuous on wan
+set interface promiscuous on lan
+set interface state wan up
+set interface state lan up
+set interface ip address wan 173.0.3.1/24
+set interface ip address lan 10.0.2.1/24
+ip route add 0.0.0.0/0 via 174.0.3.2 wan
+set ip neighbor wan 174.0.3.2 12:34:56:78:90:ab static no-fib-entry
+set acl-plugin acl permit+reflect ipv4
+set acl-plugin acl deny ipv4
+set acl-plugin interface wan input acl 1
+set acl-plugin interface wan output acl 0
+set acl-plugin session timeout udp idle 24
+set acl-plugin session timeout tcp idle 24
+set acl-plugin session timeout tcp transient 24
