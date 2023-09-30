@@ -1,5 +1,5 @@
 #!/bin/bash
-SELF_DIR=$(dirname "${BASH_SOURCE[0]}")
+SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
 
 EXP_DATE=$(date | tr ' ' '-')

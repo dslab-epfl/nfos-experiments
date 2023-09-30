@@ -10,4 +10,4 @@ fi
 
 NFOS_PATH="$HOME/nfos"
 OUTPUT_DIR="$HOME/nfos-exp-results" # Change this to desired path if needed
-NFOS_EXP_PATH="$(dirname "${BASH_SOURCE[0]}")/.."
+NFOS_EXP_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."

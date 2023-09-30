@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run vpp NF
-SELF_DIR=$(dirname "${BASH_SOURCE[0]}")
+SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
 
 NF=$1

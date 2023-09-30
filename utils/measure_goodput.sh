@@ -5,7 +5,7 @@
 # $3: target loss
 # $4: Framework (vpp|nfos)
 
-SELF_DIR=$(dirname "${BASH_SOURCE[0]}")
+SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
 
 function search_goodput {

@@ -7,7 +7,7 @@
 # All these files saved in the respective NF directory
 #
 
-SELF_DIR=$(dirname "${BASH_SOURCE[0]}")
+SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
 NF=$1
 NUM_CORES=$2
