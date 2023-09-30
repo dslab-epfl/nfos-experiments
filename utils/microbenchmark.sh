@@ -18,9 +18,9 @@ for FREQ in READ_ONLY WRITE_PER_PACKET; do
                 bash $NFOS_EXP_PATH/utils/measure_goodput.sh $NF $NUM_CORES $TARGET_LOSS $SYS 8388608 48 120 48 >> $NF.res.$EXP_DATE.$SYS.$FREQ.$ZIPF 2>&1
         	done
         done
-        pushd $NFOS_PATH
-            git reset --hard
-        popd
+        sed -i "13s/#define $FREQ/#define READ_ONLY/g" $NFOS_PATH/nf/dummy/dummy_config.h
+        sed -i "11s/#define DATA_ZIPF_FACTOR $ZIPF/#define DATA_ZIPF_FACTOR 0/g" $NFOS_PATH/nf/dummy/dummy_config.h
+
 
         input=$NF.res.$EXP_DATE.$SYS.$FREQ.$ZIPF
         output=$OUTPUT_DIR/microbenchmark/$FREQ-zipf${ZIPF}
