@@ -18,8 +18,7 @@ bash utils/vpp/install-vpp.sh
 
 # Get all results
 
-Note: in the scripts, NFOS NAT is called "ei-nat", NFOS load balancer is
-called "maglev".
+Note: in the scripts, NAT is called "ei-nat", load balancer is called "maglev".
 
 Note: sometimes you need to press ctrl-C a few times to kill a running script...
 
@@ -65,9 +64,9 @@ bridge.mem  ei-nat.mem  fw.mem  maglev.mem
 
 Run on icdslab5.epfl.ch only:
 ```
-bash utils/exp-bridge.sh
+bash utils/exp-bridge.sh # This is the slowest script that takes 8-10 hours to run.
 bash utils/exp-ei-nat.sh
-bash utils/exp-fw.sh
+bash utils/exp-fw.sh # This is the script to go if you want to test if the dependencies are properly set up, this takes less than 30 mins to run. 
 ```
 
 Run on icdslab8.epfl.ch only:
