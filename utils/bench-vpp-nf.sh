@@ -1,5 +1,9 @@
 #!/bin/bash
 # Run vpp NF
+
+# Clean up upon Ctrl-C
+trap 'sudo pkill -SIGTERM -x vpp_main; echo KILLED; exit 1' INT
+
 # LOCK
 exec {lock_fd}>/var/nfos-lock
 flock -x "$lock_fd"
@@ -108,9 +112,9 @@ fi
 
 # traffic gen
 if [[ $NF == "fw" ]]; then
-    ssh $TESTER_HOST bash ~/gen-load.sh $REAL_TRACE $TRACE_SPEED nat $DURATION vpp $BENCH_TYPE >/dev/null 2>&1
+    ssh -t $TESTER_HOST bash ~/gen-load.sh $REAL_TRACE $TRACE_SPEED nat $DURATION vpp $BENCH_TYPE >/dev/null 2>&1
 else
-    ssh $TESTER_HOST bash ~/gen-load.sh $REAL_TRACE $TRACE_SPEED $NF $DURATION vpp $BENCH_TYPE >/dev/null 2>&1
+    ssh -t $TESTER_HOST bash ~/gen-load.sh $REAL_TRACE $TRACE_SPEED $NF $DURATION vpp $BENCH_TYPE >/dev/null 2>&1
 fi
 
 # Collect rx_missed_errors from vpp
@@ -162,7 +166,7 @@ else
         MISSED="0"
     fi
 fi
-sudo killall -SIGTERM vpp_main
+sudo pkill -SIGTERM -x vpp_main
 
 # Number of pkts sent
 scp "$TESTER_HOST:~/load-generator.log" . >/dev/null 2>&1

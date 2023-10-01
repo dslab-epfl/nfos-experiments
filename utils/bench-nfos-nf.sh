@@ -7,6 +7,9 @@
 # All these files saved in the respective NF directory
 #
 
+# Clean up upon Ctrl-C
+trap 'sudo kill -SIGTERM $(ps --ppid $NF_PPID -o pid= >/dev/null 2>&1) >/dev/null 2>&1; echo KILLED; exit 1' INT
+
 # LOCK
 exec {lock_fd}>/var/nfos-lock
 flock -x "$lock_fd"
@@ -60,12 +63,14 @@ scp "$NFOS_EXP_PATH/utils/benchmark.lua" "$TESTER_HOST:~/" >/dev/null 2>&1
 # echo $DURATION
 # echo $MAX_NUM_SESSIONS
 if [[ $BENCH_PROFILE == "yes" ]]; then
-    NF_EXE_CMD="run-scal-profile"
+    NF_CMD="nf-scal-profile"
 else
-    NF_EXE_CMD="run"
+    NF_CMD="nf"
 fi
 pushd "$NFOS_PATH/nf/$NF"
-    make $NF_EXE_CMD EXP_TIME=$(python3 -c "print(1000000 * $SESSION_TIMEOUT)") MAX_NUM_PKT_SETS=$MAX_NUM_SESSIONS LCORES=$(python3 -c "print(','.join([str(0 + x * 2) for x in range($NUM_CORES + 1)]))") >middlebox.log 2>&1 &
+    make $NF_CMD EXP_TIME=$(python3 -c "print(1000000 * $SESSION_TIMEOUT)") MAX_NUM_PKT_SETS=$MAX_NUM_SESSIONS LCORES=$(python3 -c "print(','.join([str(0 + x * 2) for x in range($NUM_CORES + 1)]))") >middlebox.log 2>&1
+    sudo ./build/app/nf >>middlebox.log 2>&1 &
+    NF_PPID=$!
 popd
 # wait for nf to start
 sleep 7
@@ -77,9 +82,6 @@ fi
 if [[ $NF == "ei-nat" || $NF == "fw-nat" ]]; then
     sleep 5
 fi
-###
-##TODO: disbale tx batching for ei-nat by default!!!
-###
 
 # create pt snapshots, only in profiling mode
 #sleep 3
@@ -88,12 +90,16 @@ fi
 
 # traffic gen
 if [[ $NF == "ei-nat" || $NF == "fw-nat" || $NF == "fw" || $NF == "dummy" || $NF == "policer" ]]; then
-    ssh $TESTER_HOST bash ~/gen-load.sh $REAL_TRACE $TRACE_SPEED nat $DURATION nfos $BENCH_TYPE >/dev/null 2>&1
+    ssh -t $TESTER_HOST bash ~/gen-load.sh $REAL_TRACE $TRACE_SPEED nat $DURATION nfos $BENCH_TYPE >/dev/null 2>&1
 else
-    ssh $TESTER_HOST bash ~/gen-load.sh $REAL_TRACE $TRACE_SPEED $NF $DURATION nfos $BENCH_TYPE >/dev/null 2>&1
+    ssh -t $TESTER_HOST bash ~/gen-load.sh $REAL_TRACE $TRACE_SPEED $NF $DURATION nfos $BENCH_TYPE >/dev/null 2>&1
 fi
-# Collect rx_missed_errors from vpp
-sudo killall -SIGTERM nf
+
+# Get pid of NF instance
+NF_PID=$(ps --ppid $NF_PPID -o pid=)
+sudo kill -SIGTERM $NF_PID >/dev/null 2>&1
+
+# Collect stats
 # TODO: adapt this for the case with more than two ports
 # Assume only the first two device receives traffic
 if [[ $BENCH_PROFILE == "yes" ]]; then
