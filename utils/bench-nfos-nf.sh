@@ -10,9 +10,12 @@
 # Clean up upon Ctrl-C
 trap 'sudo kill -SIGTERM $(ps --ppid $NF_PPID -o pid= >/dev/null 2>&1) >/dev/null 2>&1; echo KILLED; exit 1' INT
 
-# LOCK
-exec {lock_fd}>/var/nfos-lock
-flock -x "$lock_fd"
+# Work around a legacy issue with mem footprint measurement
+if [[ $7 != "mem" ]]; then
+    # LOCK
+    exec {lock_fd}>/var/nfos-lock
+    flock -x "$lock_fd"
+fi
 
 SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
@@ -46,12 +49,17 @@ else
     DURATION=$REAL_DURATION
 fi
 
-if [[ $7 == "profile" ]]; then
-    BENCH_PROFILE="yes"   
+if [[ $7 == "mem" ]]; then
+    BENCH_PROFILE="no"
     BENCH_TYPE="throughput"
 else
-    BENCH_PROFILE="no"
-    BENCH_TYPE=$7
+    if [[ $7 == "profile" ]]; then
+        BENCH_PROFILE="yes"   
+        BENCH_TYPE="throughput"
+    else
+        BENCH_PROFILE="no"
+        BENCH_TYPE=$7
+    fi
 fi
 
 scp "$NFOS_EXP_PATH/utils/gen-load.sh" "$TESTER_HOST:~/" >/dev/null 2>&1
@@ -142,5 +150,8 @@ if [[ $BENCH_PROFILE == "yes" ]]; then
     grep Profile $NFOS_PATH/nf/$NF/middlebox.log > $NF.profile
 fi
 
-# UNLOCK
-exec {lock_fd}>&-
+# Work around a legacy issue with mem footprint measurement
+if [[ $7 != "mem" ]]; then
+    # UNLOCK
+    exec {lock_fd}>&-
+fi

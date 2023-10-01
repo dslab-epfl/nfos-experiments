@@ -59,13 +59,13 @@ PARAMS = {
     "fw": [8388608, 48, 120, 48],
 }
 
-# bash nfos-experiments/utils/bench-${FRAMEWORK}-nf.sh $NF $NUM_CORES $MAX_NUM_SESSIONS $SESSION_TIMEOUT $rate $TRACE_DURATION throughput
+# bash nfos-experiments/utils/bench-${FRAMEWORK}-nf.sh $NF $NUM_CORES $MAX_NUM_SESSIONS $SESSION_TIMEOUT $rate $TRACE_DURATION mem
 def run_bench(framework, nf, core_num):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     bench_path = os.path.join(
         script_dir, f"bench-{framework}-nf.sh"
     )
-    cmd = f"bash {bench_path} {nf} {core_num} {PARAMS[nf][0]} {PARAMS[nf][1]} {MAX_TRP[framework][nf][core_num]} {PARAMS[nf][2]} throughput"
+    cmd = f"bash {bench_path} {nf} {core_num} {PARAMS[nf][0]} {PARAMS[nf][1]} {MAX_TRP[framework][nf][core_num]} {PARAMS[nf][2]} mem"
     print(cmd)
     while True:
         subprocess.run(cmd, shell=True)
