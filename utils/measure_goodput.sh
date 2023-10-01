@@ -5,6 +5,8 @@
 # $3: target loss
 # $4: Framework (vpp|nfos)
 
+set -e
+
 SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
 
@@ -30,11 +32,10 @@ function search_goodput {
         local exp_res
         while true; do
             bash $NFOS_EXP_PATH/utils/bench-${FRAMEWORK}-nf.sh $NF $NUM_CORES $MAX_NUM_SESSIONS $SESSION_TIMEOUT $rate $TRACE_DURATION throughput
-            exp_res=$(grep failed benchmark.result)
-            if [[ $exp_res == "" ]]; then
+            if [[ $(grep failed benchmark.result) == "" ]]; then
                 break
             fi
-            echo "failed!!!"
+            echo "Retrying"
         done
 
         local loss=$(grep loss benchmark.result | cut -d ' ' -f9)

@@ -1,7 +1,10 @@
 #!/bin/bash
 
+set -e
+
 SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
+trap 'pushd $NFOS_PATH; git reset --hard; popd' EXIT
 
 EXP_DATE=$(date | tr ' ' '-')
 NF="dummy"

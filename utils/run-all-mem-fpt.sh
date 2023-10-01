@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
 

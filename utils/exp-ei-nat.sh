@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source $SELF_DIR/config.sh
 
@@ -7,8 +9,6 @@ EXP_DATE=$(date | tr ' ' '-')
 
 sudo ~/dpdk/usertools/dpdk-devbind.py --unbind 3b:00.1 5e:00.1
 
-rm ei-nat.res.$EXP_DATE.nfos
-rm ei-nat.res.$EXP_DATE.vpp
 for TARGET_LOSS in 0.001; do
     for SYS in nfos; do
         for NUM_CORES in 1 2 4 8 12 16 20 23; do

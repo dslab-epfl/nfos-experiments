@@ -21,6 +21,8 @@ bash utils/vpp/install-vpp.sh
 Note: in the scripts, NFOS NAT is called "ei-nat", NFOS load balancer is
 called "maglev".
 
+Note: sometimes you need to press ctrl-C a few times to kill a running script...
+
 Run on both NF servers:
 ```
 bash utils/run-all.sh
